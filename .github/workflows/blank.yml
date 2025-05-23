@@ -1,0 +1,39 @@
+name: Kotlin CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Шаг 1: Устанавливаем ktlint
+      - name: Install ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.2.1/ktlint
+          chmod a+x ktlint
+          sudo mv ktlint /usr/local/bin/
+
+      # Шаг 2: Проверяем код с ktlint (автоформатирование можно добавить опционально)
+      - name: Run ktlint check
+        run: ktlint --color --reporter=plain?group_by_file --relative
+
+      # Шаг 3: Даем права на gradlew (если используется)
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Шаг 4: Сборка и тесты
+      - name: Build with Gradle
+        run: ./gradlew build
