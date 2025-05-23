@@ -9,43 +9,50 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
+import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
-import dev.inmo.tgbotapi.utils.*
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.first
 
 suspend fun photoBot(token: String) {
     val bot = telegramBot(token)
 
-    bot.buildBehaviourWithLongPolling {
-        println(getMe())
+    bot
+        .buildBehaviourWithLongPolling {
+            println(getMe())
 
-        val nameReplyMarkup = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-            matrix {
-                row {
-                    +SimpleKeyboardButton("nope")
-                }
-            }
-        )
-        onCommand("start") {
-            val photo = waitPhoto(
-                SendTextMessage(it.chat.id, "Send me your photo please")
-            ).first()
-
-            val name = waitText(
-                SendTextMessage(
-                    it.chat.id,
-                    "Send me your name or choose \"nope\"",
-                    replyMarkup = nameReplyMarkup
+            val nameReplyMarkup =
+                dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
+                    matrix {
+                        row {
+                            +SimpleKeyboardButton("nope")
+                        }
+                    },
                 )
-            ).first().text.takeIf { it != "nope" }
+            onCommand("start") {
+                val photo =
+                    waitPhoto(
+                        SendTextMessage(it.chat.id, "Send me your photo please"),
+                    ).first()
 
-            sendPhoto(
-                it.chat,
-                photo.mediaCollection,
-                entities = buildEntities {
-                    if (name != null) bold(name) // may be collapsed up to name ?.let(::regular)
-                }
-            )
-        }
-    }.join()
+                val name =
+                    waitText(
+                        SendTextMessage(
+                            it.chat.id,
+                            "Send me your name or choose \"nope\"",
+                            replyMarkup = nameReplyMarkup,
+                        ),
+                    ).first().text.takeIf { msg -> msg != "nope" }
+
+                sendPhoto(
+                    it.chat,
+                    photo.mediaCollection,
+                    entities =
+                        buildEntities {
+                            if (name != null) bold(name) // may be collapsed up to name ?.let(::regular)
+                        },
+                )
+            }
+        }.join()
 }
