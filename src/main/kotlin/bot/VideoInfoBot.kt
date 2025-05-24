@@ -1,14 +1,13 @@
 package bot
 
+import bot.commands.infoCommand
+import bot.commands.searchCommand
+import bot.commands.startCommand
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import getVideoInfo
-import kotlinx.coroutines.flow.first
 
 suspend fun videoInfoBot(
     token: String,
@@ -16,20 +15,36 @@ suspend fun videoInfoBot(
 ) {
     val bot = telegramBot(token)
 
-    bot
-        .buildBehaviourWithLongPolling {
-            println(getMe())
+    try {
+        bot
+            .buildBehaviourWithLongPolling {
+                println(getMe())
 
-            onCommand("start") {
-                val videoId =
-                    waitText(
-                        SendTextMessage(it.chat.id, "Send me yt video id"),
-                    ).first().text
+                // Welcoming message
+                onCommand("start") { command ->
+                    try {
+                        startCommand(this, command)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        sendTextMessage(
+                            chatId = command.chat.id,
+                            text = "Error processing start command",
+                        )
+                    }
+                }
 
-                sendTextMessage(
-                    it.chat.id,
-                    getVideoInfo(ytToken, videoId),
-                )
-            }
-        }.join()
+                // Searching video
+                onCommand("search") { command ->
+                    searchCommand(this, command, ytToken)
+                }
+
+                // Info about video by its url
+                onCommand("info") { command ->
+                    infoCommand(this, command, ytToken)
+                }
+            }.join()
+    } catch (e: Exception) {
+        println("Bot crashed: ${e.message}")
+        e.printStackTrace()
+    }
 }
