@@ -1,13 +1,13 @@
 package bot.commands
 
-import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
+import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.message.content.TextMessage
 import youtube.toMessage
 import youtube.videoInfo
 
 suspend fun infoCommand(
-    exec: RequestsExecutor,
+    exec: BehaviourContext,
     command: TextMessage,
     ytToken: String,
 ) {

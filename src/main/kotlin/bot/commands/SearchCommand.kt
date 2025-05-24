@@ -1,12 +1,12 @@
 package bot.commands
 
-import dev.inmo.tgbotapi.bot.RequestsExecutor
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
+import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.message.content.TextMessage
 import youtube.searchVideos
 
 suspend fun searchCommand(
-    exec: RequestsExecutor,
+    exec: BehaviourContext,
     command: TextMessage,
     ytToken: String,
 ) {

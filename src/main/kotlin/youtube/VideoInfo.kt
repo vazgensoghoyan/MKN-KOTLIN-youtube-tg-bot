@@ -57,7 +57,7 @@ suspend fun videoInfo(
     }
 }
 
-suspend fun VideoInfo.toMessage(): String =
+fun VideoInfo.toMessage(): String =
     """ === Video Information ===
         Video title: ${this.snippet.title}
         URL: https://youtu.be/${this.id}

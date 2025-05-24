@@ -5,7 +5,6 @@ import bot.commands.searchCommand
 import bot.commands.startCommand
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
-import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 
@@ -15,34 +14,27 @@ suspend fun videoInfoBot(
 ) {
     val bot = telegramBot(token)
 
+    bot
+        .buildBehaviourWithLongPolling {
+            println(getMe())
+
+            // Welcoming message
+            onCommand("start", requireOnlyCommandInMessage = true) {
+                startCommand(this, it)
+            }
+
+            // Searching video
+            onCommand("search", requireOnlyCommandInMessage = false) {
+                searchCommand(this, it, ytToken)
+            }
+
+            // Info about video by its url
+            onCommand("info", requireOnlyCommandInMessage = false) {
+                infoCommand(this, it, ytToken)
+            }
+        }.join()
+
     try {
-        bot
-            .buildBehaviourWithLongPolling {
-                println(getMe())
-
-                // Welcoming message
-                onCommand("start") { command ->
-                    try {
-                        startCommand(this, command)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        sendTextMessage(
-                            chatId = command.chat.id,
-                            text = "Error processing start command",
-                        )
-                    }
-                }
-
-                // Searching video
-                onCommand("search") { command ->
-                    searchCommand(this, command, ytToken)
-                }
-
-                // Info about video by its url
-                onCommand("info") { command ->
-                    infoCommand(this, command, ytToken)
-                }
-            }.join()
     } catch (e: Exception) {
         println("Bot crashed: ${e.message}")
         e.printStackTrace()
