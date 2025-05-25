@@ -35,8 +35,8 @@ suspend fun searchCommand(
     // If nothing was found
     if (searchResults.isEmpty()) {
         exec.sendTextMessage(
-            chatId = command.chat.id,
-            text = "Nothing found for '$queryMessage'",
+            command.chat.id,
+            "Nothing found for '$queryMessage'",
         )
         return
     }
@@ -55,8 +55,8 @@ suspend fun searchCommand(
 
     // Sending the message
     exec.sendTextMessage(
-        chatId = command.chat.id,
-        entities = response,
+        command.chat.id,
+        response,
         replyMarkup = ReplyKeyboardRemove(),
     )
 }

@@ -11,7 +11,8 @@ Welcome! Use commands:
 /search_concrete - Search for specific entities (videos, playlists, channels)
 /info - Information about the video by ID
 /playlist - Information about the playlist and videos in it by ID
-/thumbnails - Get all video thumbnails of different qualities
+/thumbnail - Get all video thumbnails of different qualities
+/thumbnails - Get the best thumbnails for given videos
     """
 
 suspend fun startCommand(

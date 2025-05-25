@@ -22,6 +22,8 @@ suspend fun getVideoInfo(
             parameter("key", apiKey)
         }
 
+    println(response.bodyAsText())
+
     return Json.decodeFromString<YouTubeVideosResponse>(response.bodyAsText()).items.first()
 }
 

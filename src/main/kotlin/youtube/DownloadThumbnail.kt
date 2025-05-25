@@ -11,7 +11,59 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-// Перечисление доступных качеств превью
+suspend fun downloadThumbnailsForVideos(
+    apiKey: String,
+    videoIds: List<String>,
+    client: HttpClient = HttpClient(CIO),
+): List<ByteArray> =
+    coroutineScope {
+        videoIds
+            .map { videoId ->
+                async {
+                    try {
+                        val info = async { getVideoInfo(apiKey, videoId).snippet.thumbnails!!.size }
+                        val bytes = async { downloadAllThumbnailVariants(videoId, client) }
+
+                        bytes.await()[info.await() - 1]
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+            }.awaitAll()
+            .filterNotNull()
+    }
+
+suspend fun downloadAllThumbnailVariants(
+    videoId: String,
+    client: HttpClient = HttpClient(CIO),
+): List<ByteArray> =
+    coroutineScope {
+        // Running all downloads in parallel
+        ThumbnailQuality.entries
+            .map { quality ->
+                async {
+                    try {
+                        // We use an IO manager for network operations
+                        withContext(Dispatchers.IO) {
+                            downloadThumbnail(client, videoId, quality)
+                        }
+                    } catch (_: IOException) {
+                        null // Missing unavailable qualities
+                    }
+                }
+            }.awaitAll()
+            .filterNotNull() // Filtering failed downloads
+    }
+
+// "https://i.ytimg.com/vi/$videoId/${quality.path}"
+// "https://ytimg.googleusercontent.com/vi/$videoId/${quality.path}"
+private suspend fun downloadThumbnail(
+    client: HttpClient,
+    videoId: String,
+    quality: ThumbnailQuality,
+): ByteArray = client.get("https://ytimg.googleusercontent.com/vi/$videoId/${quality.path}").readRawBytes()
+
+// Listing the available preview qualities
 private enum class ThumbnailQuality(
     val path: String,
 ) {
@@ -21,35 +73,3 @@ private enum class ThumbnailQuality(
     STANDARD("sddefault.jpg"),
     MAX_RES("maxresdefault.jpg"),
 }
-
-suspend fun downloadAllThumbnails(videoId: String): List<ByteArray> =
-    coroutineScope {
-        // Создаем клиент один раз для всех запросов
-        val client = HttpClient(CIO)
-
-        // Запускаем все загрузки параллельно
-        ThumbnailQuality.entries
-            .map { quality ->
-                async {
-                    try {
-                        // Используем IO-диспетчер для сетевых операций
-                        withContext(Dispatchers.IO) {
-                            val bytes = downloadThumbnail(client, videoId, quality)
-                            println("$quality download ended")
-                            bytes
-                        }
-                    } catch (_: IOException) {
-                        null // Пропускаем недоступные качества
-                    }
-                }
-            }.awaitAll()
-            .filterNotNull() // Фильтруем неудачные загрузки
-    }
-
-// "https://i.ytimg.com/vi/$videoId/${quality.path}"
-// "https://ytimg.googleusercontent.com/vi/$videoId/hqdefault.jpg"
-private suspend fun downloadThumbnail(
-    client: HttpClient,
-    videoId: String,
-    quality: ThumbnailQuality,
-): ByteArray = client.get("https://ytimg.googleusercontent.com/vi/$videoId/${quality.path}").readRawBytes()

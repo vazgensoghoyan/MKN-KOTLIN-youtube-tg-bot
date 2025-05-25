@@ -5,6 +5,7 @@ import bot.commands.playlistCommand
 import bot.commands.searchCommand
 import bot.commands.searchConcreteCommand
 import bot.commands.startCommand
+import bot.commands.thumbnailCommand
 import bot.commands.thumbnailsCommand
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
@@ -48,8 +49,12 @@ suspend fun videoInfoBot(
                     description = "Information about the playlist and videos in it by ID",
                 ),
                 BotCommand(
-                    command = "thumbnails",
+                    command = "thumbnail",
                     description = "Get all video thumbnails of different qualities",
+                ),
+                BotCommand(
+                    command = "thumbnails",
+                    description = "Get the best thumbnails for given video IDs",
                 ),
             )
 
@@ -78,9 +83,14 @@ suspend fun videoInfoBot(
                 playlistCommand(this, it, ytToken)
             }
 
-            // Info about playlist by ID
+            // Get all video thumbnails of different qualities
+            onCommand("thumbnail", requireOnlyCommandInMessage = true) {
+                thumbnailCommand(this, it)
+            }
+
+            // Get the best thumbnails for given videos
             onCommand("thumbnails", requireOnlyCommandInMessage = true) {
-                thumbnailsCommand(this, it)
+                thumbnailsCommand(this, it, ytToken)
             }
 
             // Printing bot info in console

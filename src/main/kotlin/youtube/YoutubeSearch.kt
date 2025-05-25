@@ -53,8 +53,6 @@ class YoutubeSearch(
                 whatToSearch?.let { parameter("type", whatToSearch) }
             }
 
-        println(response.bodyAsText())
-
         return Json.decodeFromString(response.bodyAsText())
     }
 }

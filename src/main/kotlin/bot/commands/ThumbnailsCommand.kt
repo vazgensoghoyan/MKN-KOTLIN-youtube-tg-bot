@@ -5,14 +5,23 @@ import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.message.content.TextMessage
-import youtube.downloadAllThumbnailVariants
+import youtube.downloadThumbnailsForVideos
 
-suspend fun thumbnailCommand(
+suspend fun thumbnailsCommand(
     exec: BehaviourContext,
     command: TextMessage,
+    ytToken: String,
 ) {
-    val videoId = getText(exec, command, "Send me list of youtube video IDs")
-    val byteArrays = downloadAllThumbnailVariants(videoId)
+    val videoId = getText(exec, command, "Send me list of YouTube video IDs (one per line)")
+
+    val videoIds =
+        videoId
+            .split('\n')
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .take(10)
+
+    val byteArrays = downloadThumbnailsForVideos(ytToken, videoIds)
 
     byteArrays.forEach { bytes ->
         exec.sendPhoto(
