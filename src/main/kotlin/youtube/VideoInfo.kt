@@ -9,6 +9,28 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
+suspend fun getVideoInfo(
+    apiKey: String,
+    videoId: String,
+): VideoInfo {
+    val client = HttpClient(CIO)
+
+    val response =
+        client.get("https://www.googleapis.com/youtube/v3/videos") {
+            parameter("part", "snippet,statistics")
+            parameter("id", videoId)
+            parameter("key", apiKey)
+        }
+
+    println(response.bodyAsText())
+
+    return Json
+        .decodeFromString<YouTubeVideosResponse>(
+            response.bodyAsText(),
+        ).items
+        .first()
+}
+
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
@@ -21,7 +43,7 @@ data class YouTubeVideosResponse(
 @JsonIgnoreUnknownKeys
 data class VideoInfo(
     val id: String,
-    val snippet: SearchSnippet,
+    val snippet: YtSearchListItemSnippet,
     val statistics: VideoStatistics,
 )
 
@@ -33,24 +55,3 @@ data class VideoStatistics(
     val likeCount: String,
     val commentCount: String,
 )
-
-suspend fun getVideoInfo(
-    apiKey: String,
-    videoId: String,
-): VideoInfo {
-    val client = HttpClient(CIO)
-    return try {
-        val response =
-            client.get("https://www.googleapis.com/youtube/v3/videos") {
-                parameter("part", "snippet,contentDetails,statistics")
-                parameter("id", videoId)
-                parameter("key", apiKey)
-            }
-
-        val f = Json.decodeFromString<YouTubeVideosResponse>(response.bodyAsText()).items
-
-        f.firstOrNull() ?: throw Exception("Video of ID '$videoId' was not found")
-    } finally {
-        client.close()
-    }
-}

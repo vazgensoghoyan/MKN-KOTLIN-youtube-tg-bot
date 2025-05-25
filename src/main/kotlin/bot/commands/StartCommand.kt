@@ -7,9 +7,9 @@ import dev.inmo.tgbotapi.types.message.content.TextMessage
 const val WELCOMING_TEXT =
     """
 Welcome! Use commands:
-/search - find videos
+/search - search in youtube (videos, playlists, channels)
 /info - get video details
-/playlist_items - get videos from playlist
+/playlist - get info about playlist and videos from it by its id
     """
 
 suspend fun startCommand(

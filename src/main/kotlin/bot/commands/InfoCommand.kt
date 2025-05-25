@@ -30,31 +30,27 @@ suspend fun infoCommand(
             ).first()
             .text
 
-    try {
-        val vid = getVideoInfo(ytToken, videoId)
+    val vid = getVideoInfo(ytToken, videoId)
 
-        exec.sendTextMessage(
-            chatId = command.chat.id,
-            entities = vid.toMessage(),
-            replyMarkup =
-                InlineKeyboardMarkup(
-                    keyboard =
+    exec.sendTextMessage(
+        chatId = command.chat.id,
+        entities = vid.toMessageEntities(),
+        replyMarkup =
+            InlineKeyboardMarkup(
+                keyboard =
+                    listOf(
                         listOf(
-                            listOf(
-                                URLInlineKeyboardButton("Watch it", "https://youtu.be/${vid.id}"),
+                            URLInlineKeyboardButton(
+                                "Watch it",
+                                "https://youtu.be/${vid.id}",
                             ),
                         ),
-                ),
-        )
-    } catch (e: Exception) {
-        exec.sendTextMessage(
-            chatId = command.chat.id,
-            text = "Video with ID '$videoId' was not found!",
-        )
-    }
+                    ),
+            ),
+    )
 }
 
-fun VideoInfo.toMessage(): List<TextSource> {
+fun VideoInfo.toMessageEntities(): List<TextSource> {
     val videoInfo = this
 
     return buildEntities(" ") {
@@ -69,24 +65,6 @@ fun VideoInfo.toMessage(): List<TextSource> {
             italic("Comments: ") + "${videoInfo.statistics.commentCount}\n\n" +
 
             italic("Description (first <=100 chars):\n") +
-            "${videoInfo.snippet.description.take(100)}..."
+            "«${videoInfo.snippet.description.take(100)}...»"
     }
-
-    /*return """
-VIDEO INFORMATION
-
-  Video title:
-  Channel name: ${this.snippet.channelTitle}
-  Channel ID: ${this.snippet.channelId}
-
-  Published: ${this.snippet.publishedAt}
-  Views: ${this.statistics.viewCount}
-  Likes: ${this.statistics.likeCount}
-  Comments: ${this.statistics.commentCount}
-
-  Description
-  <<<<<
-  ${this.snippet.description.take(100)}...
-  >>>>>
-    """*/
 }

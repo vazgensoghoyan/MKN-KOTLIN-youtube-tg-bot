@@ -1,15 +1,19 @@
 package bot
 
 import bot.commands.infoCommand
-import bot.commands.playlistItemsCommand
+import bot.commands.playlistCommand
 import bot.commands.searchCommand
 import bot.commands.startCommand
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
+import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.api.telegramBot
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.types.BotCommand
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.CallbackDataInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.URLInlineKeyboardButton
+import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 
 suspend fun videoInfoBot(
     token: String,
@@ -38,7 +42,7 @@ suspend fun videoInfoBot(
                     description = "Информация о видео по ID",
                 ),
                 BotCommand(
-                    command = "playlist_items",
+                    command = "playlist",
                     description = "Получение видео из плейлиста по ID",
                 ),
             )
@@ -59,8 +63,29 @@ suspend fun videoInfoBot(
             }
 
             // Playlist videos by its id
-            onCommand("playlist_items", requireOnlyCommandInMessage = true) {
-                playlistItemsCommand(this, it, ytToken)
+            onCommand("playlist", requireOnlyCommandInMessage = true) {
+                playlistCommand(this, it, ytToken)
+            }
+
+            // trying
+            onCommand("try", requireOnlyCommandInMessage = true) {
+                sendMessage(
+                    chatId = it.chat.id,
+                    text = "ktgbotapi is the best Kotlin Telegram Bot API library",
+                    replyMarkup =
+                        InlineKeyboardMarkup(
+                            keyboard =
+                                listOf(
+                                    listOf(
+                                        CallbackDataInlineKeyboardButton("I know", "know"),
+                                        URLInlineKeyboardButton(
+                                            "Learn more",
+                                            "https://github.com/InsanusMokrassar/ktgbotapi",
+                                        ),
+                                    ),
+                                ),
+                        ),
+                )
             }
 
             println(getMe())

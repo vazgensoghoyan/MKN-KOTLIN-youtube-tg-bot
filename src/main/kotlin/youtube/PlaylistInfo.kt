@@ -12,57 +12,37 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 suspend fun getPlaylistInfo(
     apiKey: String,
     playlistId: String,
-): Playlist? {
+): YtPlaylist {
     val client = HttpClient(CIO)
-    return try {
-        val response =
-            client.get("https://www.googleapis.com/youtube/v3/playlists") {
-                parameter("part", "snippet,contentDetails")
-                parameter("id", playlistId)
-                parameter("key", apiKey)
-            }
 
-        println(response.bodyAsText())
+    val response =
+        client.get("https://www.googleapis.com/youtube/v3/playlists") {
+            parameter("part", "snippet")
+            parameter("id", playlistId)
+            parameter("key", apiKey)
+        }
 
-        Json.decodeFromString<PlaylistResponse>(response.bodyAsText()).items.firstOrNull()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    } finally {
-        client.close()
-    }
+    println(response.bodyAsText())
+
+    return Json
+        .decodeFromString<YtPlaylistsResponse>(
+            response.bodyAsText(),
+        ).items
+        .first()
 }
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class PlaylistResponse(
-    val items: List<Playlist>,
+data class YtPlaylistsResponse(
+    val items: List<YtPlaylist>,
 )
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class Playlist(
+data class YtPlaylist(
     val id: String,
-    val snippet: PlaylistSnippet,
-    val contentDetails: PlaylistContentDetails?,
-)
-
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-@Serializable
-@JsonIgnoreUnknownKeys
-data class PlaylistSnippet(
-    val publishedAt: String,
-    val channelId: String,
-    val title: String,
-    val description: String,
-    val channelTitle: String,
-)
-
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-@Serializable
-@JsonIgnoreUnknownKeys
-data class PlaylistContentDetails(
-    val itemCount: Int,
+    val snippet: YtSearchListItemSnippet,
+    val contentDetails: YtSearchListItemContentDetails? = null,
 )
