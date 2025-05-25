@@ -35,7 +35,6 @@ suspend fun searchCommand(
             .text
 
     var maxResultsCount: Int
-
     do {
         maxResultsCount = exec
             .waitText(
