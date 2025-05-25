@@ -11,23 +11,19 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 suspend fun getPlaylistItems(
     apiKey: String,
     playlistId: String,
+    maxResults: Int = 5,
 ): List<PlaylistItem> {
     val client = HttpClient(CIO)
-    return try {
-        val response =
-            client.get("https://www.googleapis.com/youtube/v3/playlistItems") {
-                parameter("part", "snippet")
-                parameter("playlistId", playlistId)
-                parameter("key", apiKey)
-            }
 
-        Json.decodeFromString<PlaylistItemsResponse>(response.bodyAsText()).items
-    } catch (e: Exception) {
-        e.printStackTrace()
-        emptyList()
-    } finally {
-        client.close()
-    }
+    val response =
+        client.get("https://www.googleapis.com/youtube/v3/playlistItems") {
+            parameter("part", "snippet")
+            parameter("playlistId", playlistId)
+            parameter("key", apiKey)
+            parameter("maxResults", maxResults)
+        }
+
+    return Json.decodeFromString<PlaylistItemsResponse>(response.bodyAsText()).items
 }
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)

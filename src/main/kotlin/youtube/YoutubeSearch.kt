@@ -41,7 +41,7 @@ class YoutubeSearch(
     private suspend fun fetchYoutubePage(
         query: String,
         pageToken: String? = null,
-        maxResults: Int = 50,
+        maxResults: Int = 5,
     ): YtSearchResponse {
         val response =
             client.get("https://www.googleapis.com/youtube/v3/search") {
@@ -94,6 +94,7 @@ data class YtSearchListItemSnippet(
     val channelId: String,
     val title: String,
     val description: String,
+    val thumbnails: Map<String, YtSearchListItemThumbnailInfo>? = null,
     val channelTitle: String,
 )
 
@@ -102,4 +103,13 @@ data class YtSearchListItemSnippet(
 @JsonIgnoreUnknownKeys
 data class YtSearchListItemContentDetails(
     val itemCount: Int,
+)
+
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
+data class YtSearchListItemThumbnailInfo(
+    val url: String,
+    val width: Int? = null,
+    val height: Int? = null,
 )

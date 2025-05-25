@@ -22,13 +22,7 @@ suspend fun getPlaylistInfo(
             parameter("key", apiKey)
         }
 
-    println(response.bodyAsText())
-
-    return Json
-        .decodeFromString<YtPlaylistsResponse>(
-            response.bodyAsText(),
-        ).items
-        .first()
+    return Json.decodeFromString<YtPlaylistsResponse>(response.bodyAsText()).items.first()
 }
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)

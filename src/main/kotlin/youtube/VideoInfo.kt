@@ -22,13 +22,7 @@ suspend fun getVideoInfo(
             parameter("key", apiKey)
         }
 
-    println(response.bodyAsText())
-
-    return Json
-        .decodeFromString<YouTubeVideosResponse>(
-            response.bodyAsText(),
-        ).items
-        .first()
+    return Json.decodeFromString<YouTubeVideosResponse>(response.bodyAsText()).items.first()
 }
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)

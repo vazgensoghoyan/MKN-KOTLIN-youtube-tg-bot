@@ -1,9 +1,8 @@
 package bot.commands
 
+import bot.commands.helper.getText
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.URLInlineKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.message.content.TextMessage
@@ -11,7 +10,6 @@ import dev.inmo.tgbotapi.types.message.textsources.TextSource
 import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
-import kotlinx.coroutines.flow.first
 import youtube.VideoInfo
 import youtube.getVideoInfo
 
@@ -20,16 +18,7 @@ suspend fun infoCommand(
     command: TextMessage,
     ytToken: String,
 ) {
-    val videoId =
-        exec
-            .waitText(
-                SendTextMessage(
-                    command.chat.id,
-                    "Send me ID of youtube video",
-                ),
-            ).first()
-            .text
-
+    val videoId = getText(exec, command, "Send me ID of youtube video")
     val vid = getVideoInfo(ytToken, videoId)
 
     exec.sendTextMessage(
@@ -50,6 +39,7 @@ suspend fun infoCommand(
     )
 }
 
+// Constructing response message from data
 fun VideoInfo.toMessageEntities(): List<TextSource> {
     val videoInfo = this
 

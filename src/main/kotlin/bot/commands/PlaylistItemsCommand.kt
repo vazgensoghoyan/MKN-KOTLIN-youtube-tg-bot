@@ -1,9 +1,9 @@
 package bot.commands
 
+import bot.commands.helper.getNumber
+import bot.commands.helper.getText
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.URLInlineKeyboardButton
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardMarkup
 import dev.inmo.tgbotapi.types.message.content.TextMessage
@@ -11,7 +11,6 @@ import dev.inmo.tgbotapi.types.message.textsources.TextSource
 import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
-import kotlinx.coroutines.flow.first
 import youtube.PlaylistItem
 import youtube.YtPlaylist
 import youtube.getPlaylistInfo
@@ -22,18 +21,17 @@ suspend fun playlistCommand(
     command: TextMessage,
     ytToken: String,
 ) {
-    val playlistId =
-        exec
-            .waitText(
-                SendTextMessage(
-                    command.chat.id,
-                    "Send me ID of youtube playlist",
-                ),
-            ).first()
-            .text
+    val playlistId = getText(exec, command, "Send me ID of youtube playlist")
+    val maxResults: Int =
+        getNumber(
+            exec,
+            command,
+            5,
+            "Give me needed count of search results, less then 10. Default value is 5",
+        ) { number -> 1 <= number && number <= 10 }
 
     val playlist = getPlaylistInfo(ytToken, playlistId)
-    val videos = getPlaylistItems(ytToken, playlistId)
+    val videos = getPlaylistItems(ytToken, playlistId, maxResults)
 
     exec.sendTextMessage(
         chatId = command.chat.id,
@@ -53,6 +51,7 @@ suspend fun playlistCommand(
     )
 }
 
+// Constructing response message from data
 fun getResponseMessage(
     playlist: YtPlaylist,
     videos: List<PlaylistItem>,
