@@ -9,6 +9,7 @@ const val WELCOMING_TEXT =
 Welcome! Use commands:
 /search - find videos
 /info - get video details
+/playlist_items - get videos from playlist
     """
 
 suspend fun startCommand(

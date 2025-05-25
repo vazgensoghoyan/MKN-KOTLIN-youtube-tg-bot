@@ -9,24 +9,25 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
-suspend fun searchVideos(
+suspend fun getPlaylistInfo(
     apiKey: String,
-    query: String,
-): List<YoutubeVideo> {
+    playlistId: String,
+): Playlist? {
     val client = HttpClient(CIO)
     return try {
         val response =
-            client.get("https://www.googleapis.com/youtube/v3/search") {
-                parameter("part", "snippet")
-                parameter("q", query)
+            client.get("https://www.googleapis.com/youtube/v3/playlists") {
+                parameter("part", "snippet,contentDetails")
+                parameter("id", playlistId)
                 parameter("key", apiKey)
-                parameter("type", "video")
             }
 
-        Json.decodeFromString<YouTubeSearchResponse>(response.bodyAsText()).items
+        println(response.bodyAsText())
+
+        Json.decodeFromString<PlaylistResponse>(response.bodyAsText()).items.firstOrNull()
     } catch (e: Exception) {
         e.printStackTrace()
-        emptyList()
+        null
     } finally {
         client.close()
     }
@@ -35,32 +36,33 @@ suspend fun searchVideos(
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class YouTubeSearchResponse(
-    val items: List<YoutubeVideo>,
+data class PlaylistResponse(
+    val items: List<Playlist>,
 )
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class YoutubeVideo(
-    val id: VideoId,
-    val snippet: SearchSnippet,
+data class Playlist(
+    val id: String,
+    val snippet: PlaylistSnippet,
+    val contentDetails: PlaylistContentDetails?,
 )
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class VideoId(
-    val videoId: String,
-)
-
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-@Serializable
-@JsonIgnoreUnknownKeys
-data class SearchSnippet(
+data class PlaylistSnippet(
     val publishedAt: String,
     val channelId: String,
     val title: String,
     val description: String,
     val channelTitle: String,
+)
+
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
+data class PlaylistContentDetails(
+    val itemCount: Int,
 )

@@ -1,6 +1,7 @@
 package bot
 
 import bot.commands.infoCommand
+import bot.commands.playlistItemsCommand
 import bot.commands.searchCommand
 import bot.commands.startCommand
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
@@ -36,6 +37,10 @@ suspend fun videoInfoBot(
                     command = "info",
                     description = "Информация о видео по ID",
                 ),
+                BotCommand(
+                    command = "playlist_items",
+                    description = "Получение видео из плейлиста по ID",
+                ),
             )
 
             // Welcoming message
@@ -48,9 +53,14 @@ suspend fun videoInfoBot(
                 searchCommand(this, it, ytToken)
             }
 
-            // Info about video by its url
+            // Info about video by its id
             onCommand("info", requireOnlyCommandInMessage = true) {
                 infoCommand(this, it, ytToken)
+            }
+
+            // Playlist videos by its id
+            onCommand("playlist_items", requireOnlyCommandInMessage = true) {
+                playlistItemsCommand(this, it, ytToken)
             }
 
             println(getMe())
