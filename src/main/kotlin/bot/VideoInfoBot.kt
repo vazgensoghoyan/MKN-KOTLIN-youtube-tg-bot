@@ -3,10 +3,12 @@ package bot
 import bot.commands.infoCommand
 import bot.commands.searchCommand
 import bot.commands.startCommand
-import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
+import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
+import dev.inmo.tgbotapi.extensions.api.telegramBot
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.types.BotCommand
 
 suspend fun videoInfoBot(
     token: String,
@@ -15,8 +17,26 @@ suspend fun videoInfoBot(
     val bot = telegramBot(token)
 
     bot
-        .buildBehaviourWithLongPolling {
-            println(getMe())
+        .buildBehaviourWithLongPolling(
+            defaultExceptionsHandler = {
+                it.printStackTrace()
+            },
+        ) {
+            // Setting commands for suggestions in bot
+            setMyCommands(
+                BotCommand(
+                    command = "start",
+                    description = "Приветственное меню",
+                ),
+                BotCommand(
+                    command = "search",
+                    description = "Поиск видео на YouTube по запросу",
+                ),
+                BotCommand(
+                    command = "info",
+                    description = "Информация о видео по ID",
+                ),
+            )
 
             // Welcoming message
             onCommand("start", requireOnlyCommandInMessage = true) {
@@ -24,19 +44,15 @@ suspend fun videoInfoBot(
             }
 
             // Searching video
-            onCommand("search", requireOnlyCommandInMessage = false) {
+            onCommand("search", requireOnlyCommandInMessage = true) {
                 searchCommand(this, it, ytToken)
             }
 
             // Info about video by its url
-            onCommand("info", requireOnlyCommandInMessage = false) {
+            onCommand("info", requireOnlyCommandInMessage = true) {
                 infoCommand(this, it, ytToken)
             }
-        }.join()
 
-    try {
-    } catch (e: Exception) {
-        println("Bot crashed: ${e.message}")
-        e.printStackTrace()
-    }
+            println(getMe())
+        }.join()
 }

@@ -34,7 +34,7 @@ data class VideoStatistics(
     val commentCount: String,
 )
 
-suspend fun videoInfo(
+suspend fun getVideoInfo(
     apiKey: String,
     videoId: String,
 ): VideoInfo {
@@ -47,8 +47,6 @@ suspend fun videoInfo(
                 parameter("key", apiKey)
             }
 
-        println(response.bodyAsText())
-
         val f = Json.decodeFromString<YouTubeVideosResponse>(response.bodyAsText()).items
 
         f.firstOrNull() ?: throw Exception("Video of ID '$videoId' was not found")
@@ -56,16 +54,3 @@ suspend fun videoInfo(
         client.close()
     }
 }
-
-fun VideoInfo.toMessage(): String =
-    """ === Video Information ===
-        Video title: ${this.snippet.title}
-        URL: https://youtu.be/${this.id}
-        Channel name: ${this.snippet.channelTitle}
-        Channel ID: ${this.snippet.channelId}
-        Published: ${this.snippet.publishedAt}
-        Views: ${this.statistics.viewCount}
-        Likes: ${this.statistics.likeCount}
-        Comments: ${this.statistics.commentCount}
-        Description (first 100 chars):\n ${this.snippet.description.take(100)}...
-    """

@@ -35,8 +35,7 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // logging
-    implementation("org.slf4j:slf4j-api:2.0.9")
+    // logging realization
     implementation("ch.qos.logback:logback-classic:1.5.18")
 
     // test

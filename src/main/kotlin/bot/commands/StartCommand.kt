@@ -7,8 +7,8 @@ import dev.inmo.tgbotapi.types.message.content.TextMessage
 const val WELCOMING_TEXT =
     """
 Welcome! Use commands:
-/search <search query> - find videos
-/info <videoId> - get video details
+/search - find videos
+/info - get video details
     """
 
 suspend fun startCommand(
