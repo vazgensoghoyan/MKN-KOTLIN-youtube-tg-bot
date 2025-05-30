@@ -1,99 +1,74 @@
 package bot
 
-import bot.commands.infoCommand
-import bot.commands.playlistCommand
-import bot.commands.searchCommand
-import bot.commands.searchConcreteCommand
-import bot.commands.startCommand
-import bot.commands.thumbnailCommand
-import bot.commands.thumbnailsCommand
+import bot.commands.IBotCommand
+import bot.commands.SearchCommand
+import bot.commands.StartCommand
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.api.telegramBot
+import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.types.BotCommand
 
-suspend fun videoInfoBot(
-    token: String,
-    ytToken: String,
+class VideoInfoBot(
+    private val token: String,
+    private val ytToken: String,
 ) {
     val bot = telegramBot(token)
+    private val commands = CommandFactory.createAllCommands()
+    val commandManager = UserCommandManager()
 
-    bot
-        .buildBehaviourWithLongPolling(
-            defaultExceptionsHandler = {
-                it.printStackTrace()
+    suspend fun start() {
+        bot
+            .buildBehaviourWithLongPolling {
+                registerCommands()
+                setupCommandHandlers()
+                println(getMe())
+            }.join()
+    }
+
+    private suspend fun BehaviourContext.registerCommands() {
+        setMyCommands(
+            commands.map {
+                BotCommand(
+                    it.command,
+                    it.description,
+                )
             },
-        ) {
-            // Setting commands for suggestions in bot
-            setMyCommands(
-                BotCommand(
-                    command = "start",
-                    description = "Welcoming menu",
-                ),
-                BotCommand(
-                    command = "search",
-                    description = "Search on YouTube on request",
-                ),
-                BotCommand(
-                    command = "search_concrete",
-                    description = "Search for specific entities (videos, playlists, channels)",
-                ),
-                BotCommand(
-                    command = "info",
-                    description = "Information about the video by ID",
-                ),
-                BotCommand(
-                    command = "playlist",
-                    description = "Information about the playlist and videos in it by ID",
-                ),
-                BotCommand(
-                    command = "thumbnail",
-                    description = "Get all video thumbnails of different qualities",
-                ),
-                BotCommand(
-                    command = "thumbnails",
-                    description = "Get the best thumbnails for given video IDs",
-                ),
-            )
+        )
+    }
 
-            // Welcoming message
-            onCommand("start", requireOnlyCommandInMessage = true) {
-                startCommand(this, it)
+    private suspend fun BehaviourContext.setupCommandHandlers() {
+        commands.forEach { cmd ->
+            onCommand(cmd.command, requireOnlyCommandInMessage = true) {
+                cmd.execute(this, it, ytToken)
             }
+        }
+    }
+}
 
-            // Searching in YT
-            onCommand("search", requireOnlyCommandInMessage = true) {
-                searchCommand(this, it, ytToken)
-            }
+object CommandFactory {
+    fun createAllCommands(): List<IBotCommand> =
+        listOf(
+            StartCommand(),
+            SearchCommand(),
+            /*SearchConcreteCommand(),
+            InfoCommand(),
+            PlaylistCommand(),
+            ThumbnailCommand(),
+            ThumbnailsCommand(),*/
+        )
+}
 
-            // Searching concrete in YT
-            onCommand("search_concrete", requireOnlyCommandInMessage = true) {
-                searchConcreteCommand(this, it, ytToken)
-            }
-
-            // Info about video by ID
-            onCommand("info", requireOnlyCommandInMessage = true) {
-                infoCommand(this, it, ytToken)
-            }
-
-            // Info about playlist by ID
-            onCommand("playlist", requireOnlyCommandInMessage = true) {
-                playlistCommand(this, it, ytToken)
-            }
-
-            // Get all video thumbnails of different qualities
-            onCommand("thumbnail", requireOnlyCommandInMessage = true) {
-                thumbnailCommand(this, it)
-            }
-
-            // Get the best thumbnails for given videos
-            onCommand("thumbnails", requireOnlyCommandInMessage = true) {
-                thumbnailsCommand(this, it, ytToken)
-            }
-
-            // Printing bot info in console
-            println(getMe())
-        }.join()
+enum class VideoInfoBotCommands(
+    val command: String,
+    val description: String,
+) {
+    START("start", "Welcoming menu"),
+    SEARCH_CONCRETE("search_concrete", "Search for specific entities (videos, playlists, channels)"),
+    INFO("info", "Information about the video by ID"),
+    PLAYLIST("playlist", "Information about the playlist and videos in it by ID"),
+    THUMBNAIL("thumbnail", "Get all video thumbnails of different qualities"),
+    THUMBNAILS("thumbnails", "Get the best thumbnails for given video IDs"),
 }

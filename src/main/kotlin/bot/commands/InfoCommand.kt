@@ -19,24 +19,32 @@ suspend fun infoCommand(
     ytToken: String,
 ) {
     val videoId = getText(exec, command, "Send me ID of youtube video")
-    val vid = getVideoInfo(ytToken, videoId)
 
-    exec.sendTextMessage(
-        chatId = command.chat.id,
-        entities = vid.toMessageEntities(),
-        replyMarkup =
-            InlineKeyboardMarkup(
-                keyboard =
-                    listOf(
+    try {
+        val vid = getVideoInfo(ytToken, videoId)
+
+        exec.sendTextMessage(
+            chatId = command.chat.id,
+            entities = vid.toMessageEntities(),
+            replyMarkup =
+                InlineKeyboardMarkup(
+                    keyboard =
                         listOf(
-                            URLInlineKeyboardButton(
-                                "Watch it",
-                                "https://youtu.be/${vid.id}",
+                            listOf(
+                                URLInlineKeyboardButton(
+                                    "Watch it",
+                                    "https://youtu.be/${vid.id}",
+                                ),
                             ),
                         ),
-                    ),
-            ),
-    )
+                ),
+        )
+    } catch (_: Exception) {
+        exec.sendTextMessage(
+            command.chat.id,
+            "No video of ID '$videoId' found",
+        )
+    }
 }
 
 // Constructing response message from data

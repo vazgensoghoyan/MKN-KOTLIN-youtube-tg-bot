@@ -6,7 +6,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 suspend fun getPlaylistItems(
     apiKey: String,
@@ -14,6 +13,7 @@ suspend fun getPlaylistItems(
     maxResults: Int = 5,
 ): List<PlaylistItem> {
     val client = HttpClient(CIO)
+    val json = Json { ignoreUnknownKeys = true }
 
     val response =
         client.get("https://www.googleapis.com/youtube/v3/playlistItems") {
@@ -23,28 +23,22 @@ suspend fun getPlaylistItems(
             parameter("maxResults", maxResults)
         }
 
-    return Json.decodeFromString<PlaylistItemsResponse>(response.bodyAsText()).items
+    return json.decodeFromString<PlaylistItemsResponse>(response.bodyAsText()).items
 }
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class PlaylistItemsResponse(
     val items: List<PlaylistItem>,
     val nextPageToken: String? = null,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class PlaylistItem(
     val id: String,
     val snippet: PlaylistItemSnippet,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class PlaylistItemSnippet(
     val publishedAt: String,
     val channelTitle: String,
@@ -56,9 +50,7 @@ data class PlaylistItemSnippet(
     val videoOwnerChannelId: String,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class ResourceId(
     val kind: String,
     val videoId: String,

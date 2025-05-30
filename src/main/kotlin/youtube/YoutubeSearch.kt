@@ -8,13 +8,13 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 class YoutubeSearch(
     private val apiToken: String,
     private val whatToSearch: String? = "video,playlist,channel",
 ) {
     private val client = HttpClient(CIO)
+    val json = Json { ignoreUnknownKeys = true }
 
     suspend fun youtubeSearch(
         query: String,
@@ -53,30 +53,24 @@ class YoutubeSearch(
                 whatToSearch?.let { parameter("type", whatToSearch) }
             }
 
-        return Json.decodeFromString(response.bodyAsText())
+        return json.decodeFromString(response.bodyAsText())
     }
 }
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchResponse(
     val items: List<YtSearchListItem>,
     val nextPageToken: String? = null,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchListItem(
     val id: YtSearchListItemId,
     val snippet: YtSearchListItemSnippet,
     val contentDetails: YtSearchListItemContentDetails? = null,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchListItemId(
     val kind: String,
     val playlistId: String? = null,
@@ -84,9 +78,7 @@ data class YtSearchListItemId(
     val channelId: String? = null,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchListItemSnippet(
     val publishedAt: String,
     val channelId: String,
@@ -96,16 +88,12 @@ data class YtSearchListItemSnippet(
     val channelTitle: String,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchListItemContentDetails(
     val itemCount: Int,
 )
 
-@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializable
-@JsonIgnoreUnknownKeys
 data class YtSearchListItemThumbnailInfo(
     val url: String,
     val width: Int? = null,

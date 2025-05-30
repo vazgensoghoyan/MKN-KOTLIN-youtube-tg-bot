@@ -15,12 +15,17 @@ Welcome! Use commands:
 /thumbnails - Get the best thumbnails for given videos
     """
 
-suspend fun startCommand(
-    exec: BehaviourContext,
-    command: TextMessage,
-) {
-    exec.sendTextMessage(
-        chatId = command.chat.id,
-        text = WELCOMING_TEXT,
-    )
+class StartCommand : IBotCommand {
+    override val command = "start"
+    override val description = "Welcoming menu"
+
+    override suspend fun execute(
+        exec: BehaviourContext,
+        msg: TextMessage,
+    ) {
+        exec.sendTextMessage(
+            chatId = msg.chat.id,
+            text = WELCOMING_TEXT,
+        )
+    }
 }

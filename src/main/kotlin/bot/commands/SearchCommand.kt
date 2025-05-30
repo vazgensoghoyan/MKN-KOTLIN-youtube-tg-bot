@@ -13,6 +13,21 @@ import dev.inmo.tgbotapi.utils.italic
 import youtube.YoutubeSearch
 import youtube.YtSearchListItem
 
+class SearchCommand : IBotCommand {
+    override val command = "search"
+    override val description = "Search on YouTube on request"
+
+    override suspend fun execute(
+        exec: BehaviourContext,
+        msg: TextMessage,
+    ) {
+        exec.sendTextMessage(
+            chatId = msg.chat.id,
+            text = WELCOMING_TEXT,
+        )
+    }
+}
+
 suspend fun searchCommand(
     exec: BehaviourContext,
     command: TextMessage,
