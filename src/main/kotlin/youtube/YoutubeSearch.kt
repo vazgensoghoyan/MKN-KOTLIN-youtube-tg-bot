@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 
 class YoutubeSearch(
     private val apiToken: String,
-    private val whatToSearch: String? = "video,playlist,channel",
+    private val whatToSearch: String = "video,playlist,channel",
 ) {
     private val client = HttpClient(CIO)
     val json = Json { ignoreUnknownKeys = true }
@@ -49,8 +49,8 @@ class YoutubeSearch(
                 parameter("q", query)
                 parameter("maxResults", maxResults)
                 parameter("key", apiToken)
+                parameter("type", whatToSearch)
                 pageToken?.let { parameter("pageToken", it) }
-                whatToSearch?.let { parameter("type", whatToSearch) }
             }
 
         return json.decodeFromString(response.bodyAsText())

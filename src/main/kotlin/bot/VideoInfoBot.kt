@@ -42,7 +42,9 @@ class VideoInfoBot(
     private suspend fun BehaviourContext.setupCommandHandlers() {
         commands.forEach { cmd ->
             onCommand(cmd.command, requireOnlyCommandInMessage = true) {
-                cmd.execute(this, it, ytToken)
+                commandManager.execute(it.chat.id.chatId.long) {
+                    cmd.execute(this, it, ytToken)
+                }
             }
         }
     }
