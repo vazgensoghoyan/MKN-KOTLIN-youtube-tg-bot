@@ -14,8 +14,8 @@ import youtube.YoutubeSearch
 import youtube.YtSearchListItem
 
 class SearchConcreteCommand : IBotCommand {
-    override val command = "start"
-    override val description = "Welcoming menu"
+    override val command = "search_concrete"
+    override val description = "Search for specific entities (videos, playlists, channels)"
 
     private val acceptableSearchTypes = setOf("video", "playlist", "channel")
 

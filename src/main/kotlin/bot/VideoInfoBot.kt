@@ -67,10 +67,6 @@ enum class VideoInfoBotCommands(
     val command: String,
     val description: String,
 ) {
-    START("start", "Welcoming menu"),
-    SEARCH_CONCRETE("search_concrete", "Search for specific entities (videos, playlists, channels)"),
-    INFO("info", "Information about the video by ID"),
-    PLAYLIST("playlist", "Information about the playlist and videos in it by ID"),
     THUMBNAIL("thumbnail", "Get all video thumbnails of different qualities"),
     THUMBNAILS("thumbnails", "Get the best thumbnails for given video IDs"),
 }
