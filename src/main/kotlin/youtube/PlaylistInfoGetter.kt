@@ -11,10 +11,10 @@ class PlaylistInfoGetter(
     private val apiKey: String,
     private val playlistId: String,
 ) {
-    suspend fun getPlaylistItems(maxResults: Int = 5): List<PlaylistItem> {
-        val client = HttpClient(CIO)
-        val json = Json { ignoreUnknownKeys = true }
+    private val client: HttpClient = HttpClient(CIO)
+    private val json = Json { ignoreUnknownKeys = true }
 
+    suspend fun getPlaylistItems(maxResults: Int = 5): List<PlaylistItem> {
         val response =
             client.get("https://www.googleapis.com/youtube/v3/playlistItems") {
                 parameter("part", "snippet")
@@ -27,9 +27,6 @@ class PlaylistInfoGetter(
     }
 
     suspend fun getPlaylistInfo(): YtPlaylist {
-        val client = HttpClient(CIO)
-        val json = Json { ignoreUnknownKeys = true }
-
         val response =
             client.get("https://www.googleapis.com/youtube/v3/playlists") {
                 parameter("part", "snippet")

@@ -11,7 +11,7 @@ import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
 import youtube.VideoInfo
-import youtube.getVideoInfo
+import youtube.VideoInfoGetter
 
 class InfoCommand : IBotCommand {
     override val command = "info"
@@ -25,7 +25,8 @@ class InfoCommand : IBotCommand {
         val videoId = Helper.getText(exec, msg, "Send me ID of youtube video")
 
         try {
-            val vid = getVideoInfo(ytToken, videoId)
+            val g = VideoInfoGetter(ytToken, videoId)
+            val vid = g.getVideoInfo()
 
             exec.sendTextMessage(
                 chatId = msg.chat.id,
