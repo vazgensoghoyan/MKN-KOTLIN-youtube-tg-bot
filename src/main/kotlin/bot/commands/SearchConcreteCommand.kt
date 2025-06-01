@@ -10,7 +10,7 @@ import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
 import youtube.YoutubeSearch
-import youtube.YtSearchListItem
+import youtube.models.YtSearchListItem
 
 class SearchConcreteCommand : IBotCommand {
     override val command = "search_concrete"

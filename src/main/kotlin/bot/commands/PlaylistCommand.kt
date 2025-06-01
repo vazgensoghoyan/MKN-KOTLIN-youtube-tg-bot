@@ -11,8 +11,8 @@ import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
 import youtube.PlaylistInfoGetter
-import youtube.PlaylistItem
-import youtube.YtPlaylist
+import youtube.models.PlaylistItem
+import youtube.models.YtPlaylist
 
 class PlaylistCommand : IBotCommand {
     override val command = "playlist"

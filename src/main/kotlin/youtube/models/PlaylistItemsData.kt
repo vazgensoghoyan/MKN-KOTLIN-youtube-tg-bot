@@ -1,4 +1,4 @@
-package youtube
+package youtube.models
 
 import kotlinx.serialization.Serializable
 

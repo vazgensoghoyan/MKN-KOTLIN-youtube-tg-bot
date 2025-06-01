@@ -7,6 +7,8 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
+import youtube.models.YtSearchListItem
+import youtube.models.YtSearchResponse
 
 class YoutubeSearch(
     private val apiToken: String,

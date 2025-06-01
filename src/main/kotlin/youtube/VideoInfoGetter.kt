@@ -6,6 +6,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
+import youtube.models.VideoInfo
+import youtube.models.YouTubeVideosResponse
 
 class VideoInfoGetter(
     private val apiKey: String,

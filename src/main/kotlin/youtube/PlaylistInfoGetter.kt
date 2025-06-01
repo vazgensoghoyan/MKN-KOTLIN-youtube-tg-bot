@@ -6,6 +6,10 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
+import youtube.models.PlaylistItem
+import youtube.models.PlaylistItemsResponse
+import youtube.models.YtPlaylist
+import youtube.models.YtPlaylistsResponse
 
 class PlaylistInfoGetter(
     private val apiKey: String,

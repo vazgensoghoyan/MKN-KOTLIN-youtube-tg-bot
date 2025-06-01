@@ -10,7 +10,7 @@ import dev.inmo.tgbotapi.types.message.textsources.TextSource
 import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
-import youtube.VideoInfo
+import youtube.models.VideoInfo
 import youtube.VideoInfoGetter
 
 class InfoCommand : IBotCommand {
