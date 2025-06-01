@@ -1,6 +1,6 @@
 package bot.commands
 
-import bot.commands.helper.getText
+import bot.commands.helper.Helper
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.URLInlineKeyboardButton
@@ -22,7 +22,7 @@ class InfoCommand : IBotCommand {
         msg: TextMessage,
         ytToken: String,
     ) {
-        val videoId = getText(exec, msg, "Send me ID of youtube video")
+        val videoId = Helper.getText(exec, msg, "Send me ID of youtube video")
 
         try {
             val vid = getVideoInfo(ytToken, videoId)

@@ -6,7 +6,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.coroutineScope
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 class YoutubeSearch(
@@ -56,46 +55,3 @@ class YoutubeSearch(
         return json.decodeFromString(response.bodyAsText())
     }
 }
-
-@Serializable
-data class YtSearchResponse(
-    val items: List<YtSearchListItem>,
-    val nextPageToken: String? = null,
-)
-
-@Serializable
-data class YtSearchListItem(
-    val id: YtSearchListItemId,
-    val snippet: YtSearchListItemSnippet,
-    val contentDetails: YtSearchListItemContentDetails? = null,
-)
-
-@Serializable
-data class YtSearchListItemId(
-    val kind: String,
-    val playlistId: String? = null,
-    val videoId: String? = null,
-    val channelId: String? = null,
-)
-
-@Serializable
-data class YtSearchListItemSnippet(
-    val publishedAt: String,
-    val channelId: String,
-    val title: String,
-    val description: String,
-    val thumbnails: Map<String, YtSearchListItemThumbnailInfo>? = null,
-    val channelTitle: String,
-)
-
-@Serializable
-data class YtSearchListItemContentDetails(
-    val itemCount: Int,
-)
-
-@Serializable
-data class YtSearchListItemThumbnailInfo(
-    val url: String,
-    val width: Int? = null,
-    val height: Int? = null,
-)

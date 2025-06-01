@@ -1,7 +1,6 @@
 package bot.commands
 
-import bot.commands.helper.getNumber
-import bot.commands.helper.getText
+import bot.commands.helper.Helper
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.buttons.InlineKeyboardButtons.URLInlineKeyboardButton
@@ -25,9 +24,9 @@ class PlaylistCommand : IBotCommand {
         msg: TextMessage,
         ytToken: String,
     ) {
-        val playlistId = getText(exec, msg, "Send me ID of youtube playlist")
+        val playlistId = Helper.getText(exec, msg, "Send me ID of youtube playlist")
         val maxResults: Int =
-            getNumber(
+            Helper.getNumber(
                 exec,
                 msg,
                 5,

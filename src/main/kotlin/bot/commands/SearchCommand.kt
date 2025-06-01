@@ -1,7 +1,6 @@
 package bot.commands
 
-import bot.commands.helper.getNumber
-import bot.commands.helper.getText
+import bot.commands.helper.Helper
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardRemove
@@ -22,10 +21,10 @@ class SearchCommand : IBotCommand {
         msg: TextMessage,
         ytToken: String,
     ) {
-        val queryMessage = getText(exec, msg, "Send me query message for search")
+        val queryMessage = Helper.getText(exec, msg, "Send me query message for search")
 
         val maxResults: Int =
-            getNumber(
+            Helper.getNumber(
                 exec,
                 msg,
                 5,
