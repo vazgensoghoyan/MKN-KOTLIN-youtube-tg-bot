@@ -5,7 +5,7 @@ import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.message.content.TextMessage
-import youtube.downloadThumbnailsForVideos
+import youtube.ThumbnailDownloader
 
 public class ThumbnailsCommand : IBotCommand {
     override val command = "thumbnails"
@@ -25,7 +25,8 @@ public class ThumbnailsCommand : IBotCommand {
                 .filter { it.isNotEmpty() }
                 .take(10)
 
-        val byteArrays = downloadThumbnailsForVideos(ytToken, videoIds)
+        val th = ThumbnailDownloader()
+        val byteArrays = th.downloadThumbnailsForVideos(ytToken, videoIds)
 
         byteArrays.forEach { bytes ->
             exec.sendPhoto(
