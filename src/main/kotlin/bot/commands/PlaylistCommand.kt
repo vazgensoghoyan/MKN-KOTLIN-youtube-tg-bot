@@ -10,10 +10,9 @@ import dev.inmo.tgbotapi.types.message.textsources.TextSource
 import dev.inmo.tgbotapi.utils.bold
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.italic
+import youtube.PlaylistInfoGetter
 import youtube.PlaylistItem
 import youtube.YtPlaylist
-import youtube.getPlaylistInfo
-import youtube.getPlaylistItems
 
 class PlaylistCommand : IBotCommand {
     override val command = "playlist"
@@ -33,8 +32,9 @@ class PlaylistCommand : IBotCommand {
                 "Give me needed count of search results, less then 10. Default value is 5",
             ) { number -> 1 <= number && number <= 10 }
 
-        val playlist = getPlaylistInfo(ytToken, playlistId)
-        val videos = getPlaylistItems(ytToken, playlistId, maxResults)
+        val g = PlaylistInfoGetter(ytToken, playlistId)
+        val playlist = g.getPlaylistInfo()
+        val videos = g.getPlaylistItems(maxResults)
 
         exec.sendTextMessage(
             chatId = msg.chat.id,
