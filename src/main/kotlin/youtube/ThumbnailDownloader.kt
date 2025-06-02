@@ -63,13 +63,13 @@ class ThumbnailDownloader(
 
     // "https://i.ytimg.com/vi/$videoId/${quality.path}"
     // "https://ytimg.googleusercontent.com/vi/$videoId/${quality.path}"
-    private suspend fun downloadThumbnail(
+    suspend fun downloadThumbnail(
         videoId: String,
         quality: ThumbnailQuality,
     ): ByteArray = client.get("https://ytimg.googleusercontent.com/vi/$videoId/${quality.path}").readRawBytes()
 
     // Listing the available preview qualities
-    private enum class ThumbnailQuality(
+    enum class ThumbnailQuality(
         val path: String,
     ) {
         DEFAULT("default.jpg"),

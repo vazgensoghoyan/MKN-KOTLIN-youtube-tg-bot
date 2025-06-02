@@ -25,23 +25,16 @@ dependencies {
     // Kotlinx Serialization (для парсинга JSON)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
-    // ////////////////////////////// YOUTUBE API
-    // implementation("com.google.api-client:google-api-client:2.8.0") // Google API Client для общих операций
-    // implementation("com.google.apis:google-api-services-youtube:v3-rev222-1.25.0") // YouTube Data API v3
-    // implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0") // OAuth2 для аутентификации
-    // implementation("com.google.api-client:google-api-client-jackson2:2.8.0")
-    // implementation("com.google.code.gson:gson:2.10.1") // Дополнительно: для удобства работы с JSON
-
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
     // logging realization
     implementation("ch.qos.logback:logback-classic:1.5.18")
 
     // test
     testImplementation(kotlin("test"))
-
-    // api("org.slf4j:slf4j-api:2.0.9")
+    testImplementation("io.github.serpro69:kotlin-faker:1.12.0") // Генерация тестовых данных
 }
 
 tasks.test {

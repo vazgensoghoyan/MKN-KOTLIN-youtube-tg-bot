@@ -14,7 +14,7 @@ class VideoInfoBot(
     private val ytToken: String,
 ) {
     val bot = telegramBot(botToken)
-    private val commands = CommandFactory.createAllCommands()
+    val commands = CommandFactory.createAllCommands()
 
     suspend fun start() {
         bot
