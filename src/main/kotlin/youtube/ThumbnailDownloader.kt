@@ -23,7 +23,14 @@ class ThumbnailDownloader(
                 .map { videoId ->
                     async {
                         try {
-                            val info = async { getVideoInfo(apiKey, videoId).snippet.thumbnails!!.size }
+                            val info =
+                                async {
+                                    val infoGetter = VideoInfoGetter(apiKey, videoId)
+                                    infoGetter
+                                        .getVideoInfo()
+                                        .snippet.thumbnails!!
+                                        .size
+                                }
                             val bytes = async { downloadAllThumbnailVariants(videoId) }
 
                             bytes.await()[info.await() - 1]

@@ -10,7 +10,7 @@ import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.flow.first
 
-public class Helper {
+class Helper {
     companion object {
         suspend fun getText(
             exec: BehaviourContext,

@@ -48,7 +48,7 @@ class SearchConcreteCommand : IBotCommand {
             ) { number -> 1 <= number && number <= 10 }
 
         // Searching video
-        val searcher = YoutubeSearch(ytToken)
+        val searcher = YoutubeSearch(ytToken, whatToSearch)
         val searchResults = searcher.youtubeSearch(queryMessage, maxResults)
 
         // If nothing was found

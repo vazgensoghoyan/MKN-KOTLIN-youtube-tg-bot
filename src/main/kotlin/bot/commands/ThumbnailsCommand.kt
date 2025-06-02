@@ -7,7 +7,7 @@ import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.message.content.TextMessage
 import youtube.ThumbnailDownloader
 
-public class ThumbnailsCommand : IBotCommand {
+class ThumbnailsCommand : IBotCommand {
     override val command = "thumbnails"
     override val description = "Get the best thumbnails for given video IDs"
 

@@ -9,13 +9,12 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPoll
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.types.BotCommand
 
-public class VideoInfoBot(
-    private val token: String,
+class VideoInfoBot(
+    botToken: String,
     private val ytToken: String,
 ) {
-    val bot = telegramBot(token)
+    val bot = telegramBot(botToken)
     private val commands = CommandFactory.createAllCommands()
-    // val commandManager = UserCommandManager()
 
     suspend fun start() {
         bot
